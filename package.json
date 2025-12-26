@@ -9,12 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.81.1",
+    "@tiptap/pm": "^3.13.0",
+    "@tiptap/react": "^3.13.0",
+    "@tiptap/starter-kit": "^3.13.0",
     "@types/react-slick": "^0.23.13",
     "fast-average-color": "^9.5.0",
+    "lucide-react": "^0.556.0",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "swiper": "^10.3.1"
+    "swiper": "^10.3.1",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
