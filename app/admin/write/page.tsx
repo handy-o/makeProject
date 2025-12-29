@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -9,6 +8,7 @@ import {
     ImageIcon, X, Bold, Heading2,
     Type, List, ListOrdered, Undo, Redo
 } from 'lucide-react';
+import { createPost, uploadThumbnail } from '@/lib/dbApi';
 
 // 카테고리 목록
 const CATEGORIES = ['저축', '부동산', '대출', '생활', '상식', '뉴스', '투자'];
@@ -23,38 +23,32 @@ export default function WritePage() {
 
     // 1. TipTap 에디터 설정
     const editor = useEditor({
-        extensions: [StarterKit],
+        extensions: [
+            StarterKit.configure({
+                bulletList: {},   // 불릿 리스트 활성화
+                orderedList: {},  // 숫자 리스트 활성화
+                listItem: {},     // 리스트 아이템 활성화
+            }),
+        ],
         content: '<p>내용을 입력하세요...</p>',
         immediatelyRender: false,
         editorProps: {
             attributes: {
-                class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none min-h-[400px] max-w-none [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2',
+                // class: `
+                //     prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none min-h-[400px] max-w-none 
+                //     [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2
+                // [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6
+                // `,
+                class: 'prose max-w-none m-5 min-h-[400px] focus:outline-none [&_h2]:text-2xl [&_h2]:mt-4 [&_h2]:font-bold [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6'
             },
         },
+
     });
 
     const toggleCategory = (category: string) => {
         setSelectedCategories(prev =>
             prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
         );
-    };
-
-    const uploadThumbnail = async (file: File) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`; // 중복 방지를 위해 Date.now() 사용
-        const filePath = `post-thumbnails/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-            .from('thumbnails') // 본인의 Supabase Bucket 이름 확인
-            .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-            .from('thumbnails')
-            .getPublicUrl(filePath);
-
-        return publicUrl;
     };
 
     const handleSubmit = async () => {
@@ -74,25 +68,23 @@ export default function WritePage() {
             }
 
             // DB(dd_post)에 저장
-            const { error: dbError } = await supabase
-                .from('dd_post')
-                .insert({
-                    title: title,
-                    thumbnail: finalThumbnailUrl, // 업로드된 실제 URL 저장
-                    category: selectedCategories.join(', '),
-                    content: editor.getHTML(),
-                    views: 0,
-                    shares: 0,
-                    tags: selectedCategories, // 선택한 카테고리를 태그로도 활용
-                });
+            const { data, error } = await createPost({
+                title,
+                thumbnail: finalThumbnailUrl,
+                category: selectedCategories.join(', '),
+                content: editor.getHTML(),
+                tags: selectedCategories,
+            });
 
-            if (dbError) throw dbError;
+
+            if (error) throw error;
 
             alert('게시글이 성공적으로 등록되었습니다!');
             router.push('/donday');
-        } catch (error: any) {
-            console.error('Error saving post:', error.message);
-            alert('저장 중 오류가 발생했습니다: ' + error.message);
+        } catch (error: unknown) {
+            const message = (error as Error).message;
+            console.error('Error saving post:', message);
+            alert('저장 중 오류가 발생했습니다: ' + message);
         } finally {
             setIsSubmitting(false);
         }

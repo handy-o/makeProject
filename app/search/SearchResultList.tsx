@@ -1,20 +1,8 @@
 'use client'
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
+import { Post } from "@/lib/supabase"
+import { getPostSearchKeyword } from "@/lib/dbApi";
 
-export interface Post {
-    id: string
-    title: string
-    subtitle?: string
-    thumbnail: string
-    category: string
-    views: number
-    shares: number
-    tags: string[]
-    content?: string
-    created_at: string
-    updated_at: string
-}
 
 export default function SearchResultList({ query }: { query: string }) {
     const [results, setResults] = useState<Post[]>([]);
@@ -30,16 +18,12 @@ export default function SearchResultList({ query }: { query: string }) {
             }
 
             setLoading(true);
-            const { data, error } = await supabase
-                .from('dd_post')
-                .select('*')
-                .or(`title.ilike.%${query}%,category.ilike.%${query}%,tags.cs.{${query}}`)
-                .order('created_at', { ascending: false });
+            const { data, error } = await getPostSearchKeyword(query)
 
             if (!error && data) {
                 setResults(data);
             } else {
-                console.error("검색 에러:", error);
+                console.error("검색 에러:", error.message);
             }
             setLoading(false)
         }
@@ -55,11 +39,11 @@ export default function SearchResultList({ query }: { query: string }) {
             {results.map((post) => (
                 <div key={post.id} className="p-4 border rounded shadow-sm">
                     <h3 className="font-bold">{post.title}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                        <div
+                    <div className="text-sm text-gray-600 line-clamp-3">
+                        <p
                             dangerouslySetInnerHTML={{ __html: post.content || '' }}
                         />
-                    </p>
+                    </div>
                 </div>
             ))}
         </div>

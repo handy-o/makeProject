@@ -23,6 +23,14 @@ export interface Post {
   created_at: string
   updated_at: string
 }
+export interface NewPost {
+  title: string
+  subtitle?: string
+  thumbnail: string
+  category: string
+  content?: string
+  tags: string[]
+}
 
 export interface Category {
   id: string

@@ -18,26 +18,6 @@ export default function Subscribe() {
         }
     }, [user, setSubscription])
 
-    // const handleToggleSubscription = async () => {
-    //     if (!user) {
-    //         alert('로그인이 필요합니다')
-    //         return // router.push('/login')
-    //     }
-
-    //     // 서버 업데이트
-    //     const currentStatus = isSubscribed; //zustand
-    //     const newStatus = !currentStatus;
-    //     const { error } = await updateSubscription(newStatus)
-
-    //     if (error) {
-    //         alert(`구독 상태 변경 실패: ${error.message}`)
-    //     } else {
-    //         alert(`${newStatus ? '구독이' : '구독취소가'} 완료되었습니다.`)
-    //         // 여기서 상태값 바꿔주는 코드 잇어야 하는거 아냐?
-    //     }
-    //     setLocalLoading(false)
-    // }
-
     const handleToggleSubscription = async () => {
         if (!user || isSubscribed === null) {
             alert('로그인이 필요합니다')

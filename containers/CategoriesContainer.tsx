@@ -3,6 +3,7 @@ import Categories from "@/components/Categories"
 import { supabase } from "@/lib/supabase"
 import { PostgrestError } from "@supabase/supabase-js"
 import Link from "next/link"
+import { getPostsByTag } from "@/lib/dbApi"
 
 const mockList = [
     { key: 'latest', name: '최신' },
@@ -15,31 +16,6 @@ const mockList = [
     { key: 'invest', name: '투자' },
 ] as const
 
-// (구방식)
-// const mockData = {
-//     latest: [
-//         { title: "고강도 부동산 대책, 효과 있을까?", img: "https://cdn.pixabay.com/photo/2024/11/02/19/08/bird-9169969_1280.jpg" },
-//         { title: "식탁 물가가 오르고 있어요", img: "https://cdn.pixabay.com/photo/2022/10/06/08/54/drawing-7502248_1280.jpg" },
-//     ],
-//     saving: [
-//         { title: "적금 금리 비교 꿀팁", img: "https://cdn.pixabay.com/photo/2025/03/11/09/19/money-7658983_1280.jpg" },
-//     ],
-//     realestate: [
-//         { title: "부동산 매매량, 작년 대비 30% 감소", img: "https://cdn.pixabay.com/photo/2023/01/11/18/26/bird-7712475_1280.jpg" },
-//     ],
-//     loan: [
-//         { title: "대출출", img: "https://cdn.pixabay.com/photo/2023/01/11/17/29/bird-7712374_1280.jpg" },
-//         { title: "대출 출출", img: "https://cdn.pixabay.com/photo/2023/05/13/20/01/toucan-7991337_1280.jpg" }
-//     ]
-// }
-// async function fetchData(categoryKey: string) { // 키 = categoryKey
-//     return new Promise<{ title: string; img: string }[]>((res) => {
-//         setTimeout(() => {
-//             const data = (mockData as any)[categoryKey] // mockData에서 해당 key 배열 찾아 담기
-//             res(Array.isArray(data) ? data : [])
-//         }, 300)
-//     })
-// }
 
 export default function CategoriesContainer() {
     const [activeKey, setActiveKey] = useState<string>("latest")
@@ -60,34 +36,16 @@ export default function CategoriesContainer() {
             return
         }
 
-        // (구방식) 캐싱 없는 경우 - fetchData(키)함수 재 호출
-        // fetchData(key).then((data) => {
-        //     setItems(data) // fetchData 결과로 items 업데이트
-        //     console.log('캐싱안되어서 다시 호출')
-        //     setCache((prev) => ({ ...prev, [key]: data }))
-        // })
-
         // 캐시 없으면 Supabase에서 데이터 가져오기
         setLoading(true)
         try {
             console.log('캐싱안되어서 다시 호출')
-            // 'posts' 테이블에서 해당 카테고리의 데이터를 가져오는 쿼리
-            // 최신(latest)인 경우 전체를 가져오거나 별도 로직 적용 가능
-            let query = supabase
-                .from('dd_post') // 테이블 명
-                .select('title, thumbnail') // 가져올 컬럼 (img_url은 DB 컬럼명에 맞춰 수정)
 
-            if (key !== 'latest') {
-                query = query.ilike('category', `%${categoryName}%`);
-            }
-
-            const { data, error } = await query.order('created_at', { ascending: false }).limit(3)
-
+            const { data: posts, error } = await getPostsByTag(categoryName, key);
             if (error) throw error
-
-            if (data) {
+            if (posts) {
                 // DB의 img_url을 컴포넌트에서 쓰는 img 키로 매핑
-                const formattedData = data.map(item => ({
+                const formattedData = posts.map(item => ({
                     title: item.title,
                     img: item.thumbnail
                 }))
