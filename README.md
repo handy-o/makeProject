@@ -1,11 +1,10 @@
 ### 테스트계정
 
-이메일: dond@donday.com
-비밀번호: 123123
-이름: 김돈디
-전화번호: 111-2222-3333
+- 이메일: dond@donday.com
+- 비밀번호: 123123
+- 이름: 김돈디
+- 전화번호: 111-2222-3333
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -21,7 +20,10 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/donday](http://localhost:3000/donday) with your browser to see the result.
+- **메인 화면** [http://localhost:3000/donday](http://localhost:3000/donday)
+- **로그인 화면** [http://localhost:3000/login](http://localhost:3000/login)
+- **회원가입 화면** [http://localhost:3000/signup](http://localhost:3000/singup)
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -31,8 +33,9 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 - **Styling**: CSS Modules / Global CSS
 - **State Management**: Zustand (또는 Redux - `store` 폴더 기반)
 
+```
 DODODAY/
-├── app/ # Next.js App Router (페이지 및 API 로직)
+├── app/ # Next.js App Router (페이지 및 API 로직) - 사용x
 │ ├── admin/write/ # 관리자 글쓰기 페이지
 │ ├── login/ # 로그인 페이지
 │ ├── signup/ # 회원가입 페이지
@@ -44,6 +47,7 @@ DODODAY/
 ├── store/ # 전역 상태 관리 (Zustand/Redux 설정)
 ├── hook/ # 커스텀 훅
 └── public/ # 정적 이미지 및 자산
+```
 
 ## 🛠 주요 라이브러리 활용 (Dependencies)
 
