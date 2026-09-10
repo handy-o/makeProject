@@ -33,9 +33,9 @@ function init(){
     // })
 }
 
-function confetti({x, y, count, deg}) {
+function confetti({x, y, count, deg, colors}) {
     for (let i=0; i< count ; i++) {
-        particles.push(new Particle(x, y, deg))
+        particles.push(new Particle(x, y, deg, colors))
     }
 }
 
@@ -46,15 +46,23 @@ function render() {
     const frame = () => {
         requestAnimationFrame(frame) // 재귀적으로 스스로 실행 - 144hz에는 1초에 144번, 60hz는 1초에 60번 실행 
         now = Date.now();
-        delta = now - then;
         if(delta < interval) return;
         ctx.clearRect(0,0, canvasWidth, canvasHeight)
-
+        
         // 배열 업데이트와 그리기 - 지워주는 것까지 고려해서 for문 거꾸로 돌기
         for(let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
-            particles[i].draw(ctx)
+            particles[i].draw(ctx);
+            
+            // 보이지 않을 때 렌더링 제거
+            if(particles[i].opacity < 0) particles.splice(i, 1)
         }
+        // console.log(particles.length)
+        // delta = now - then;
+
+        then = now - (delta % interval)
+
+        
     }
     // trigger
     requestAnimationFrame(frame)
@@ -63,10 +71,11 @@ function render() {
 // 클릭했을 때 confetti 실행되도록 변경
 window.addEventListener('click', () => {
     confetti({
-        x: canvasWidth / 2, // x:0이면 왼쪽 벽에서 실행
-        y: canvasHeight / 2,
-        count: 10,
-        deg: -50
+        x: 0.2, // x:canvasWidth / 2 이면 중앙 실행
+        y: 0.5, // index.js에서 this.x와 this.y에 inner값 곱하는 것으로 변경
+        count: 20,
+        deg: -50,
+        //colors: ['#ff0000']
     })
 })
 

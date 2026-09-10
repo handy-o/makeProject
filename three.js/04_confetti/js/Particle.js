@@ -1,7 +1,7 @@
-import { randomNumBetween } from "./utils.js";
+import { hexToRgb, randomNumBetween } from "./utils.js";
 
 export default class Particle {
-    constructor(x,y, deg = 0) {
+    constructor(x,y, deg = 0, colors) {
         // 퍼지는 각도
         // this.angle = Math.PI / 180 * randomNumBetween(0, 360)
         this.angle = Math.PI / 180 * randomNumBetween(deg - 30, deg + 30)
@@ -9,8 +9,8 @@ export default class Particle {
         // 퍼지는 힘의 크기
         // this.r = 3
         this.r = randomNumBetween(20, 80);
-        this.x = x;
-        this.y = y;
+        this.x = x * innerWidth;
+        this.y = y * innerHeight;
 
         this.vx = this.r * Math.cos(this.angle)
         this.vy = this.r * Math.sin(this.angle)
@@ -19,8 +19,22 @@ export default class Particle {
         this.friction = 0.89;
         this.gravity = 0.5;
 
-        this.width = 30;
-        this.height = 30;
+        this.width = 16;
+        this.height = 16;
+
+        this.opacity = 1
+
+        // delta를 random으로
+        this.widthDelta = randomNumBetween(0, 360)
+        this.heightDelta = randomNumBetween(0, 360)
+        
+        this.rotation = randomNumBetween(0, 360)
+        this.rotationDelta = randomNumBetween(-1, 10) // 시계방향-반시계방향
+        this.colors = colors || ['#ff577f', '#6596ff', '#baff92', '#fff9b0']
+        this.color = hexToRgb(
+            // 컬러 배열에 있는 색상 하나 랜덤 선택
+            this.colors[Math.floor(randomNumBetween(0, this.colors.length))]
+        )
     }
     update(){
         this.vy += this.gravity;
@@ -30,9 +44,32 @@ export default class Particle {
 
         this.x += this.vx;
         this.y += this.vy;
+
+        this.opacity -= 0.005;
+
+        this.widthDelta += 2
+        this.heightDelta += 2
+
+        this.rotation += this.rotationDelta
     }
     draw(ctx) {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        // 자연스러운 회전 추가
+        ctx.translate(this.x + this.width * 1.2, this.y + this.height * 1.2) //더 크게 빙글거리게 하려면 값 키우기
+        ctx.rotate(Math.PI / 180 * this.rotation)
+        // 원위치
+        ctx.translate(-this.x - this.width * 1.2, -this.y - this.height * 1.2)
+
+
+        ctx.fillStyle = `rgba(${this.color.r},${this.color.g},${this.color.b},${this.opacity})`;
+        ctx.fillRect(
+            this.x, 
+            this.y, 
+            // this.width,
+            // this.height
+            this.width * Math.cos(Math.PI / 180 * this.widthDelta), 
+            this.height * Math.sin(Math.PI / 180 * this.heightDelta)
+        )
+
+        ctx.resetTransform()
     }
 }
