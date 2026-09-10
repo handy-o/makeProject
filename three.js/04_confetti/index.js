@@ -33,9 +33,9 @@ function init(){
     // })
 }
 
-function confetti({x, y, count, deg, colors}) {
+function confetti({x, y, count, deg, colors, shapes, spread}) {
     for (let i=0; i< count ; i++) {
-        particles.push(new Particle(x, y, deg, colors))
+        particles.push(new Particle(x, y, deg, colors, shapes, spread))
     }
 }
 
@@ -43,12 +43,83 @@ function render() {
     let now, delta;
     let then = Date.now(); // 현재시간
 
+    let deg = 0;
     const frame = () => {
         requestAnimationFrame(frame) // 재귀적으로 스스로 실행 - 144hz에는 1초에 144번, 60hz는 1초에 60번 실행 
         now = Date.now();
         if(delta < interval) return;
         ctx.clearRect(0,0, canvasWidth, canvasHeight)
         
+        // school parade
+        // confetti({ // 왼쪽위로
+        //     x: 0, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: -50,
+        // })
+        // confetti({ // 오른쪽위로
+        //     x: 1, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: -130,
+        // })
+        // confetti({ // 왼쪽위-아래
+        //     x: 0, 
+        //     y: 0,
+        //     count: 5,
+        //     deg: 45,
+        // })
+        // confetti({ // 오른쪽위-아래
+        //     x: 1, 
+        //     y: 0,
+        //     count: 5,
+        //     deg: 135,
+        // })
+
+        // confetti({ // 중앙위로
+        //     x: 0.5, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: 270,
+        // })
+        // confetti({ // 중앙원
+        //     x: 0.5, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: 270,
+        //     spread: 180
+        // })
+        // confetti({ // 랜덤 원
+        //     x: Math.random(), 
+        //     y: Math.random(),
+        //     count: 5,
+        //     deg: 270,
+        //     spread: 180
+        // })
+        // 회전하는 일직선
+        // deg += 1;
+        // confetti({ // 일직선1
+        //     x: 0.5, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: 225 + deg,
+        //     spread: 1
+        // })
+        // confetti({ // 일직선2
+        //     x: 0.5, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: 90 + deg,
+        //     spread: 1
+        // })
+        // confetti({ // 일직선3
+        //     x: 0.5, 
+        //     y: 0.5,
+        //     count: 5,
+        //     deg: 315 + deg,
+        //     spread: 1
+        // })
+
         // 배열 업데이트와 그리기 - 지워주는 것까지 고려해서 for문 거꾸로 돌기
         for(let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
@@ -56,6 +127,7 @@ function render() {
             
             // 보이지 않을 때 렌더링 제거
             if(particles[i].opacity < 0) particles.splice(i, 1)
+            if(particles[i].y > canvasHeight) particles.splice(i, 1)
         }
         // console.log(particles.length)
         // delta = now - then;
@@ -76,6 +148,8 @@ window.addEventListener('click', () => {
         count: 20,
         deg: -50,
         //colors: ['#ff0000']
+        //shapes
+        //spread: 30
     })
 })
 
