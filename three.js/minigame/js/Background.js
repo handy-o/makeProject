@@ -1,0 +1,36 @@
+import App from "./App.js"
+export default class Background {
+    constructor() {
+        this.img = document.querySelector('#bg1Img')
+        this.height = App.height;
+        // this.width : this.height = App.width : App.height
+        // 외항내항정리 => this.width = App.height * (this.img.width/this.img.height)
+        this.width = App.height * ( this.img.width / this.img.height)
+        this.leftPos = { x:0, y:0 }
+        this.rightPos = { x:this.width - 4, y:0 }
+        this.speed = -10
+    }
+    update() {
+        // this.pos.x -= 20 
+        // 루프를 위해 한개 더 복사하여 왼쪽으로 모두 이동했을 때 다시 위치 조정
+        if(this.leftPos.x + this.width < 0 ) {
+            this.leftPos.x = this.rightPos.x + this.width - 4
+        }
+        if(this.rightPos.x + this.width < 0 ) {
+            this.rightPos.x = this.leftPos.x + this.width - 4
+        }
+
+        this.leftPos.x += this.speed
+        this.rightPos.x += this.speed
+    }
+    draw() {
+        App.ctx.drawImage(
+            this.img,
+            this.leftPos.x, this.leftPos.y, this.width, this.height
+        )
+        App.ctx.drawImage(
+            this.img,
+            this.rightPos.x, this.rightPos.y, this.width, this.height
+        )
+    }
+}
