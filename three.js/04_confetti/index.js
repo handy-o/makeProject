@@ -153,7 +153,7 @@ window.addEventListener('click', () => {
     })
 })
 
-window.addEventListener('reesize', init)
+window.addEventListener('resize', init)
 window.addEventListener('load', () => {
     init();
     render();
