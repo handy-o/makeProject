@@ -1,4 +1,5 @@
 import Background from "./Background.js";
+import Wall from "./Wall.js";
 
 export default class App {
     // 고정 상수 class명과 static 변수명
@@ -11,7 +12,12 @@ export default class App {
 
 
     constructor() {
-        this.background = new Background();
+        this.backgrounds = [
+            new Background({img:document.querySelector('#bg3Img') , speed: -1}),
+            new Background({img:document.querySelector('#bg1Img') , speed: -2}),
+            new Background({img:document.querySelector('#bg2Img') , speed: -3})
+        ];
+        this.walls = [new Wall({type: 'SMALL'})]
         window.addEventListener('resize', this.resize.bind(this))
         // bind(this)한 이유
         // window로 호출하기 때문에 this=window가 됨
@@ -42,10 +48,17 @@ export default class App {
             if(delta < App.interval) return
 
             App.ctx.clearRect(0,0, App.width, App.height)
-            App.ctx.fillRect(50, 50, 100, 100)
+            //App.ctx.fillRect(50, 50, 100, 100)
 
-            this.background.update()
-            this.background.draw()
+
+            this.backgrounds.forEach(background => {
+                background.update()
+                background.draw()
+            })
+            this.walls.forEach(wall => {
+                wall.update()
+                wall.draw()
+            })
 
             then = now - (delta % App.interval)
         }
