@@ -18,9 +18,9 @@
     "@types/react-slick": "^0.23.13",
     "fast-average-color": "^9.5.0",
     "lucide-react": "^0.556.0",
-    "next": "16.0.1",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "next": "16.4.3",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
     "swiper": "^10.3.1",
     "zustand": "^5.0.9"
   },
@@ -30,7 +30,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.0.1",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
