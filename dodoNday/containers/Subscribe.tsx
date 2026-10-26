@@ -21,7 +21,8 @@ export default function Subscribe() {
     const handleToggleSubscription = async () => {
         if (!user || isSubscribed === null) {
             alert('로그인이 필요합니다')
-            return // router.push('/login')
+            router.push('/login') // alert 확인 후 로그인 페이지로 이동
+            return
         }
         const { error } = await updateSubscription(!isSubscribed);
         if (!error) {

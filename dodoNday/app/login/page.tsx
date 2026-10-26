@@ -1,7 +1,8 @@
 'use client'
 
 import { useAuth } from "@/hook/useAuth"
-import { Eye, EyeOff, Link, Lock, Mail } from "lucide-react"
+import { ChevronLeft, Eye, EyeOff, Lock, Mail } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -25,10 +26,10 @@ export default function Login() {
     // 로딩 중
     if (authLoading) {
         return (
-            <div className="min-h-screen bg-gray-50">
-                <div className="flex items-center justify-center h-64">
-                    <div className="text-neutral-500">로딩 중...</div>
-                </div>
+            <div className="flex justify-center bg-zinc-200 min-h-screen">
+                <main className="flex items-center justify-center w-full max-w-[400px] bg-white min-h-screen">
+                    <div className="text-sm text-neutral-400">로딩 중...</div>
+                </main>
             </div>
         )
     }
@@ -50,42 +51,44 @@ export default function Login() {
             setError(error.message)
             setLoading(false)
         } else {
-            router.push('/donday')
+            router.push('/')
         }
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <div className="w-full max-w-md space-y-8">
+        <div className="flex justify-center bg-zinc-200 min-h-screen">
+            <main className="flex flex-col w-full max-w-[400px] bg-white min-h-screen">
+                {/* 상단 헤더 */}
+                <header className="flex items-center h-14 px-4">
+                    <Link href="/" className="p-1 -ml-1 text-neutral-700" aria-label="뒤로가기">
+                        <ChevronLeft className="h-6 w-6" />
+                    </Link>
+                </header>
+
+                <div className="flex-1 px-6 pt-6 pb-10">
                     <div>
-                        <div className="mx-auto h-12 w-12 bg-primary-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">H</span>
-                        </div>
-                        <h2 className="mt-6 text-center text-3xl font-bold text-neutral-500">
-                            로그인
+                        <p className="text-xs text-neutral-500">돈이 되는 이야기</p>
+                        <h2 className="mt-1 text-2xl font-bold text-[#21252b] leading-snug">
+                            다시 만나서 반가워요 👋<br />로그인해 주세요
                         </h2>
-                        <p className="mt-2 text-center text-sm text-neutral-400">
-                            HobbyMate에 오신 것을 환영합니다
-                        </p>
                     </div>
 
                     {/* handleSubmit */}
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
                         {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+                            <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl">
                                 {error}
                             </div>
                         )}
 
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-neutral-500 mb-2">
+                                <label htmlFor="email" className="block text-xs font-medium text-neutral-500 mb-2">
                                     이메일
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Mail className="h-5 w-5 text-neutral-400" />
+                                        <Mail className="h-4 w-4 text-neutral-400" />
                                     </div>
                                     <input
                                         id="email"
@@ -95,19 +98,19 @@ export default function Login() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="block w-full pl-10 pr-3 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                        className="block w-full pl-10 pr-3 py-3 text-sm bg-neutral-100 rounded-xl outline-none focus:bg-white focus:ring-2 focus:ring-[#21252b]"
                                         placeholder="이메일을 입력하세요"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-neutral-500 mb-2">
+                                <label htmlFor="password" className="block text-xs font-medium text-neutral-500 mb-2">
                                     비밀번호
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Lock className="h-5 w-5 text-neutral-400" />
+                                        <Lock className="h-4 w-4 text-neutral-400" />
                                     </div>
                                     <input
                                         id="password"
@@ -117,7 +120,7 @@ export default function Login() {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="block w-full pl-10 pr-10 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                        className="block w-full pl-10 pr-10 py-3 text-sm bg-neutral-100 rounded-xl outline-none focus:bg-white focus:ring-2 focus:ring-[#21252b]"
                                         placeholder="비밀번호를 입력하세요"
                                     />
                                     <button
@@ -126,9 +129,9 @@ export default function Login() {
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
                                         {showPassword ? (
-                                            <EyeOff className="h-5 w-5 text-neutral-400" />
+                                            <EyeOff className="h-4 w-4 text-neutral-400" />
                                         ) : (
-                                            <Eye className="h-5 w-5 text-neutral-400" />
+                                            <Eye className="h-4 w-4 text-neutral-400" />
                                         )}
                                     </button>
                                 </div>
@@ -141,42 +144,36 @@ export default function Login() {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 text-primary-500 focus:ring-primary-500 border-neutral-300 rounded"
+                                    className="h-4 w-4 accent-[#21252b]"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-500">
+                                <label htmlFor="remember-me" className="ml-2 block text-xs text-neutral-500">
                                     로그인 상태 유지
                                 </label>
                             </div>
 
-                            <div className="text-sm">
-                                <button className="font-medium text-primary-500 hover:text-primary-600">
-                                    비밀번호를 잊으셨나요?
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading ? '로그인 중...' : '로그인'}
+                            <button type="button" className="text-xs text-neutral-400 hover:text-neutral-600">
+                                비밀번호를 잊으셨나요?
                             </button>
                         </div>
 
-                        <div className="text-center">
-                            <span className="text-sm text-neutral-400">
-                                계정이 없으신가요?{' '}
-                                <Link href="/signup" className="font-medium text-primary-500 hover:text-primary-600">
-                                    회원가입
-                                </Link>
-                            </span>
-                        </div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-3.5 text-sm font-bold rounded-xl text-white bg-[#21252b] hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? '로그인 중...' : '로그인'}
+                        </button>
+
+                        <p className="text-center text-xs text-neutral-400">
+                            계정이 없으신가요?{' '}
+                            <Link href="/signup" className="font-bold text-[#21252b] underline underline-offset-2">
+                                회원가입
+                            </Link>
+                        </p>
                     </form>
                     {/* ./handleSubmit */}
                 </div>
-            </div>
+            </main>
         </div>
     )
 }
