@@ -12,6 +12,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [rememberMe, setRememberMe] = useState(false)
 
     const { signIn, user, loading: authLoading } = useAuth()
     const router = useRouter()
@@ -45,7 +46,7 @@ export default function Login() {
         setLoading(true)
         setError('')
 
-        const { error } = await signIn(email, password) // useAuth-supabase
+        const { error } = await signIn(email, password, rememberMe) // useAuth-supabase
 
         if (error) {
             setError(error.message)
@@ -144,6 +145,8 @@ export default function Login() {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
                                     className="h-4 w-4 accent-[#21252b]"
                                 />
                                 <label htmlFor="remember-me" className="ml-2 block text-xs text-neutral-500">

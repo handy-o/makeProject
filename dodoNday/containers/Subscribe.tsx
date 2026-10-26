@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import useSubscriptionStore from "@/store"
 
 export default function Subscribe() {
-    const { user, updateSubscription } = useAuth()
+    const { user, updateSubscription, signOut } = useAuth()
     const [localLoding, setLocalLoading] = useState(false)
     const router = useRouter()
 
@@ -31,7 +31,15 @@ export default function Subscribe() {
             alert('처리되었습니다.');
         }
     }
+
+    // 실수로 누르지 않도록 한 번 더 확인
+    const handleSignOut = async () => {
+        if (!confirm('로그아웃 하시겠어요?')) return
+        await signOut()
+    }
+
     return (
+        <>
         <div className="subscribe-wrap flex justify-between m-6 mt-10">
             <div className="description">
                 <h5 className="text-sm font-bold mb-2">돈이 되는 이야기</h5>
@@ -52,5 +60,17 @@ export default function Subscribe() {
                 </button>
             </div>
         </div>
+
+        {/* 로그인했을 때만 하단에 작게 표시 */}
+        {user && (
+            <p className="mb-8 text-center text-[11px] text-neutral-400">
+                {user.name ?? user.email}님
+                <span className="mx-1.5">·</span>
+                <button type="button" onClick={handleSignOut} className="underline underline-offset-2 hover:text-neutral-600">
+                    로그아웃
+                </button>
+            </p>
+        )}
+        </>
     )
 }

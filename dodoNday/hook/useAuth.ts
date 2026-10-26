@@ -16,12 +16,22 @@ export interface CustomUser {
     is_subscribed: boolean
 }
 
+// 로그인 상태 유지: 체크 → localStorage(브라우저를 닫아도 유지), 미체크 → sessionStorage(탭을 닫으면 삭제)
+const saveUserId = (userId: string, remember: boolean) => {
+    (remember ? localStorage : sessionStorage).setItem('user_id', userId)
+}
+const getUserId = () => localStorage.getItem('user_id') ?? sessionStorage.getItem('user_id')
+const clearUserId = () => {
+    localStorage.removeItem('user_id')
+    sessionStorage.removeItem('user_id')
+}
+
 export function useAuth() {
     const [user, setUser] = useState<CustomUser | null>(null) 
     const [loading, setLoading] = useState(true)
 
     useEffect(()=>{
-        const userId = localStorage.getItem('user_id')
+        const userId = getUserId()
         if(userId) {
             fetchUser(userId)
         } else {
@@ -45,7 +55,7 @@ export function useAuth() {
             // console.log('패치유저data', data)
         } catch(error) { // 런타임 에러 처리
             console.error('Error fetching user: ', error)
-            localStorage.removeItem('user_id')
+            clearUserId()
             setUser(null)
         } finally {
             setLoading(false)
@@ -118,7 +128,7 @@ export function useAuth() {
     }
 
     // 로그인
-    const signIn = async (email:string, password:string) => {
+    const signIn = async (email:string, password:string, remember = true) => {
         try {
             // 커스텀 함수 시도
             try {
@@ -128,7 +138,7 @@ export function useAuth() {
                 })
 
                 if(!error && data && data.length > 0 && data[0].success) {
-                    localStorage.setItem('user_id', data[0].user_id)
+                    saveUserId(data[0].user_id, remember)
                     await fetchUser(data[0].user_id)
                     return {data: data[0], error: null}
                 }
@@ -145,7 +155,7 @@ export function useAuth() {
                 return {data: null, error}
             }
             if(data.user) {
-                localStorage.setItem('user_id', data.user.id)
+                saveUserId(data.user.id, remember)
                 
                 await fetchUser(data.user.id)
                 
@@ -165,9 +175,10 @@ export function useAuth() {
 
     // 로그 아웃
     const signOut = async () => {
-        localStorage.removeItem('user_id')
+        const { error } = await supabase.auth.signOut()   // Supabase 세션 토큰 삭제
+        clearUserId()
         setUser(null)
-        return {error: null}
+        return {error}
     }
 
     
