@@ -101,7 +101,7 @@ export function useAuth() {
                 .insert({
                     id: data.user.id,
                     email,
-                    ame:name || data.user.email?.split('@')[0],
+                    name:name || data.user.email?.split('@')[0],
                     phone,
                     is_subscribed: false,
                     created_at: new Date().toISOString()
