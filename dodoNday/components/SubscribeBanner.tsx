@@ -1,28 +1,46 @@
 import useSubscriptionStore from "@/store";
 import { useAuth } from "@/hook/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SubscribeBanner() {
     const { updateSubscription } = useAuth()
     const { isSubscribed, toggleSubscription } = useSubscriptionStore()
-    const [isVisible, setIsVisible] = useState(false);
-    const [shouldRender, setShouldRender] = useState(false);
+    const ref = useRef<HTMLDivElement>(null)
+    const [isOpen, setIsOpen] = useState(false) // 배너를 펼쳤는지
 
     useEffect(() => {
-        if (isSubscribed === false) {
-            setShouldRender(true) // React 19/Next 16에서 추가된 effect 안에서 React state를 직접 바꾸는 패턴을 일반적으로 경계하라
-            const timer = setTimeout(() => setIsVisible(true), 60);
-            return () => clearTimeout(timer);
-        } else if (isSubscribed) {
-            setIsVisible(false)
-            const timer = setTimeout(() => setShouldRender(false), 700);
-            return () => clearTimeout(timer);
-        }
-    }, [isSubscribed])
+        const el = ref.current
+        if (!el) return
+        let inView = false // 배너 자리가 지금 화면에 보이는지
 
-    if (isSubscribed === null || (isSubscribed === true && !shouldRender)) {
-        return null
-    }
+        // "구독 전" + "화면에 보임" 두 조건이 모두 맞는 순간에만 펼침
+        // → 한 번 펼치면 아래로 스크롤해도 접지 않음 (내용이 위로 튀지 않게)
+        const tryOpen = () => {
+            const { isSubscribed } = useSubscriptionStore.getState()
+            if (inView && isSubscribed === false) setIsOpen(true)
+        }
+
+        // 배너 자리가 화면에 들어오고 나갈 때마다 inView 갱신
+        const observer = new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting
+            tryOpen()
+        })
+        observer.observe(el)
+
+        // 구독 상태가 바뀔 때: 구독하면 접고, 구독 취소하면 화면에 보일 때만 펼침
+        const unsubscribe = useSubscriptionStore.subscribe((state) => {
+            if (state.isSubscribed) setIsOpen(false)
+            else tryOpen()
+        })
+
+        return () => {
+            observer.disconnect()
+            unsubscribe()
+        }
+    }, [])
+
+    // 구독 전이고, 펼친 상태일 때만 보임
+    const isVisible = isSubscribed === false && isOpen
 
     const handleToggleSubscription = async () => {
         const { error } = await updateSubscription(!isSubscribed);
@@ -33,11 +51,17 @@ export default function SubscribeBanner() {
     }
 
     return (
-        // <div className={`overflow-hidden transition-[max-height,opacity] duration-800 delay-300 ease-in-out ${isVisible ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className={`
-            grid transition-[grid-template-rows,opacity] duration-700 ease-in-out
-            ${isVisible ? 'grid-rows-[1fr] opacity-100 mb-4' : 'grid-rows-[0fr] opacity-0 mb-0'}
-        `}>
+        // 펼침/접힘: grid-rows 1fr ↔ 0fr 전환으로 높이 애니메이션
+        // 로그인 전에도 접힌 상태로 자리는 그려 둠 → 화면에 들어왔는지 관찰하기 위해
+        // 접혀 있을 때는 inert 로 버튼에 포커스·클릭이 가지 않게 함
+        <div
+            ref={ref}
+            inert={!isVisible}
+            className={`
+                grid transition-[grid-template-rows,opacity] duration-700 ease-in-out
+                ${isVisible ? 'grid-rows-[1fr] opacity-100 mb-4' : 'grid-rows-[0fr] opacity-0 mb-0'}
+            `}
+        >
             <div className="overflow-hidden">
                 <div className="bg-blue-500 text-white p-4 text-center">
                     <p>아직 구독 전이신가요? 지금 구독해보세요! 🚀</p>
@@ -50,8 +74,5 @@ export default function SubscribeBanner() {
                 </div>
             </div>
         </div>
-
     )
-
-
 }
