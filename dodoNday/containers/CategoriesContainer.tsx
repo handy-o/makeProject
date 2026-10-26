@@ -76,9 +76,9 @@ export default function CategoriesContainer() {
             />
             <div style={{ marginTop: '20px', textAlign: 'center' }}>
                 <Link
-                    href={`/search?q=${encodeURIComponent(
-                        mockList.find(t => t.key === activeKey)?.name || '최신'
-                    )}`}
+                    href={activeKey === 'latest'
+                        ? '/latest'
+                        : `/search?q=${encodeURIComponent(mockList.find(t => t.key === activeKey)?.name || '')}`}
                     style={{
                         display: 'inline-block',
                         padding: '10px 20px',

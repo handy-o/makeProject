@@ -43,6 +43,14 @@ export async function getPostsByTag(categoryName: string, key: string) {
   return { data, error };
 }
 
+export async function getLatestPosts(limit = 20) {
+  return await supabase
+    .from('dd_post')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+}
+
 // -------------------- 시리즈 -------------------- //
 export async function getSeries() {
   return await supabase
