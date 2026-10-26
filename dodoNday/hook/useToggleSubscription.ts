@@ -1,7 +1,7 @@
 import { useAuth } from "@/hook/useAuth"
 import useSubscriptionStore from "@/store"
 
-// 구독 ↔ 구독 취소 절차를 한 곳에 모은 훅
+// 구독&구독 취소 절차를 한 곳에 모은 훅
 // store는 훅(useAuth)을 부를 수 없어서, 훅 안에서 DB 업데이트와 상태 변경을 이어 줌
 export function useToggleSubscription() {
     const { updateSubscription } = useAuth()                           // DB 담당

@@ -189,8 +189,8 @@ export function useAuth() {
         }
         try {
             // supbabase profiles 테이블 업데이트!
-            console.log('user', user)
-            console.log('user', user.id)
+            // console.log('user', user)
+            // console.log('user', user.id)
             const {data, error} = await supabase.from('profiles')
             .update({is_subscribed: newStatus})
             .eq('id', user.id)
