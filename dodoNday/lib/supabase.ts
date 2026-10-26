@@ -20,6 +20,7 @@ export interface Post {
   shares: number
   tags: string[]
   content?: string
+  series?: string | null   // ← 추가
   created_at: string
   updated_at: string
 }
@@ -40,3 +41,11 @@ export interface Category {
   created_at: string
 }
 
+export interface Series {
+  id: number
+  title: string
+  thumbnail: string
+  sort_order: number
+  is_visible: boolean
+  created_at: string
+}

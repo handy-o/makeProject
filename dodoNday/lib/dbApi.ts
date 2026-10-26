@@ -1,5 +1,6 @@
 import { NewPost, supabase } from '@/lib/supabase'
 
+// -------------------- 게시글 -------------------- //
 export async function getPostsMain() {
   return await supabase
     .from('dd_post')
@@ -42,6 +43,30 @@ export async function getPostsByTag(categoryName: string, key: string) {
   return { data, error };
 }
 
+// -------------------- 시리즈 -------------------- //
+export async function getSeries() {
+  return await supabase
+    .from('dd_series')
+    .select('*')
+    .eq('is_visible', true)
+    .order('sort_order', {ascending: true})
+}
+export async function getSeriesById(id: number) {
+  return await supabase
+    .from('dd_series')
+    .select('*')
+    .eq('id', id)
+    .single()
+}
+export async function getPostsBySeries(seriesTitle: string) {
+  return await supabase
+    .from('dd_post')
+    .select('*')
+    .eq('series', seriesTitle)
+    .order('created_at', { ascending: false }) // 최신글부터 읽기
+}
+
+// -------------------- 검색 -------------------- //
 export async function searchPosts(keyword: string) {
   return await supabase
     .from('dd_post')
@@ -49,7 +74,7 @@ export async function searchPosts(keyword: string) {
     .ilike('title', `%${keyword}%`)
 }
 
-
+// -------------------- 생성 -------------------- //
 export async function createPost(post: NewPost) {
   const { data, error } = await supabase
     .from('dd_post')

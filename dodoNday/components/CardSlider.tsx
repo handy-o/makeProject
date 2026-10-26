@@ -8,8 +8,8 @@ import Link from "next/link"
 
 interface CardProps {
   type: string;
-  items: { id: string, title: string; thumbnail: string, link?: string, extra?: React.ReactNode }[];
-  loading: boolean;
+  items: { id: string | number, title: string; thumbnail: string, link?: string, extra?: React.ReactNode }[];
+  loading?: boolean;
 }
 export default function CardSlider({ type, items, loading }: CardProps) {
   return (
@@ -32,7 +32,7 @@ export default function CardSlider({ type, items, loading }: CardProps) {
             aria-label={`슬라이드 ${idx + 1} / ${items.length}`}
           >
 
-            <Link href={`/donday/${item.id}`}>
+            <Link href={item.link ?? `/donday/${item.id}`}>
               <ColorSlide title={item.title} thumbnail={item.thumbnail} extra={item.extra} />
             </Link>
           </SwiperSlide>
