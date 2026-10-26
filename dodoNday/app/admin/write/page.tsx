@@ -80,7 +80,7 @@ export default function WritePage() {
             if (error) throw error;
 
             alert('게시글이 성공적으로 등록되었습니다!');
-            router.push('/donday');
+            router.push('/');
         } catch (error: unknown) {
             const message = (error as Error).message;
             console.error('Error saving post:', message);
