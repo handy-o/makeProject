@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import { Post } from "@/lib/supabase"
+import PostList from "@/components/PostList"
 import { getPostSearchKeyword } from "@/lib/dbApi";
 
 
@@ -30,22 +31,19 @@ export default function SearchResultList({ query }: { query: string }) {
         fetchPosts();
     }, [query])
 
-    if (loading) return <div>검색 중...</div>
-    if (query.length < 2) return <div>최소 2글자 이상 입력해주세요</div>
-    if (results.length === 0) return <div>결과가 없습니다..</div>
+    // 안내 문구 공통 스타일
+    const message = (text: string) => (
+        <p className="py-20 text-center text-sm text-neutral-400">{text}</p>
+    )
+
+    if (loading) return message('검색 중...')
+    if (query.length < 2) return message('최소 2글자 이상 입력해주세요')
+    if (results.length === 0) return message('검색 결과가 없습니다 🥲')
 
     return (
-        <div className="space-y-4">
-            {results.map((post) => (
-                <div key={post.id} className="p-4 border rounded shadow-sm">
-                    <h3 className="font-bold">{post.title}</h3>
-                    <div className="text-sm text-gray-600 line-clamp-3">
-                        <p
-                            dangerouslySetInnerHTML={{ __html: post.content || '' }}
-                        />
-                    </div>
-                </div>
-            ))}
-        </div>
+        <>
+            <p className="text-xs text-neutral-500 mb-4">총 {results.length}건</p>
+            <PostList posts={results} />
+        </>
     )
 }
