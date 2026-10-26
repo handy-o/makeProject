@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from "@/hook/useAuth"
+import { clearScrollRestore } from "@/hook/useScrollRestore"
 import { ChevronLeft, Eye, EyeOff, Lock, Mail } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -52,6 +53,8 @@ export default function Login() {
             setError(error.message)
             setLoading(false)
         } else {
+            // 로그인 후에는 메인 상단부터 (구독 전이면 상단 배너가 펼쳐짐)
+            clearScrollRestore('home')
             router.push('/')
         }
     }

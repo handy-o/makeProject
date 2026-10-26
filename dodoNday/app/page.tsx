@@ -8,8 +8,12 @@ import KeywordsContainer from "@/containers/KeywordsContainer";
 import SeriesContainer from "@/containers/SeriesContainer";
 import Subscribe from "@/containers/Subscribe";
 import TopSharedContainer from "@/containers/TopSharedContainer";
+import { useScrollRestore } from "@/hook/useScrollRestore";
 
 export default function Home() {
+    // 시리즈·글 목록 등으로 갔다가 돌아오면 보고 있던 위치로 복원
+    useScrollRestore('home')
+
     return (
         <div className="flex items-center justify-center bg-zinc-200 min-h-screen">
             <main className="flex flex-col max-w-[400px] bg-white min-h-screen">
