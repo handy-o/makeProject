@@ -1,33 +1,18 @@
 import {create} from 'zustand'
 
+// 구독 상태만 보관 (DB 업데이트는 useAuth의 updateSubscription이 담당)
 interface SubscriptionState {
     isSubscribed: boolean | null;
     isLoading: boolean;
     setSubscription: (status: boolean | null) => void;
-    toggleSubscription: (currentStatus: boolean, updateFn: (status: boolean) => Promise<{error: any} | any>) => Promise<void>;
-}
-interface UpdateResponse {
-  error: { message: string } | null;
 }
 
 const useSubscriptionStore = create<SubscriptionState>((set) => ({
     isSubscribed: null,
     isLoading: true,
 
-    // DB에서 가져온 값으로 상태를 업데이트
+    // DB에서 가져온 값 / 변경에 성공한 값으로 상태를 업데이트
     setSubscription: (status) => set({ isSubscribed: status, isLoading: false}),
-
-    // 구독 상태 변경
-    toggleSubscription: async (currentStatus, updateFn) => {
-        const newStatus = !currentStatus;
-        const {error} = await updateFn(newStatus);
-
-        if(!error) {
-            set({isSubscribed: newStatus})
-        } else {
-            throw error
-        }
-    }
 }))
 
 export default useSubscriptionStore;

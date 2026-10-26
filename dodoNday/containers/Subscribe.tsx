@@ -4,14 +4,16 @@ import { useAuth } from "@/hook/useAuth"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import useSubscriptionStore from "@/store"
+import { useToggleSubscription } from "@/hook/useToggleSubscription"
 
 export default function Subscribe() {
-    const { user, updateSubscription, signOut } = useAuth()
+    const { user, signOut } = useAuth()
+    const { isSubscribed, toggleSubscription } = useToggleSubscription()
     const [localLoding, setLocalLoading] = useState(false)
     const router = useRouter()
 
     // const isSubscribed = user?.is_subscribed ?? false
-    const { isSubscribed, setSubscription, toggleSubscription } = useSubscriptionStore(); // Zustand 스토어에서 구조분해로 두 변수 꺼내겠다
+    const { setSubscription } = useSubscriptionStore(); // 처음 로그인 정보를 불러왔을 때 스토어에 넣기 위해
     useEffect(() => {
         if (user !== undefined) {
             setSubscription(user?.is_subscribed ?? null)
@@ -24,12 +26,8 @@ export default function Subscribe() {
             router.push('/login') // alert 확인 후 로그인 페이지로 이동
             return
         }
-        const { error } = await updateSubscription(!isSubscribed);
-        if (!error) {
-            // 2. 성공했으니 이제 스토어에 있는 함수를 써먹는다!
-            toggleSubscription(isSubscribed, updateSubscription);
-            alert('처리되었습니다.');
-        }
+        const { error } = await toggleSubscription()
+        alert(error ? '처리 중 오류가 발생했습니다.' : '처리되었습니다.')
     }
 
     // 실수로 누르지 않도록 한 번 더 확인

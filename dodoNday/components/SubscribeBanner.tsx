@@ -1,10 +1,9 @@
 import useSubscriptionStore from "@/store";
-import { useAuth } from "@/hook/useAuth";
+import { useToggleSubscription } from "@/hook/useToggleSubscription";
 import { useEffect, useRef, useState } from "react";
 
 export default function SubscribeBanner() {
-    const { updateSubscription } = useAuth()
-    const { isSubscribed, toggleSubscription } = useSubscriptionStore()
+    const { isSubscribed, toggleSubscription } = useToggleSubscription()
     const ref = useRef<HTMLDivElement>(null)
     const [isOpen, setIsOpen] = useState(false) // 배너를 펼쳤는지
 
@@ -43,11 +42,8 @@ export default function SubscribeBanner() {
     const isVisible = isSubscribed === false && isOpen
 
     const handleToggleSubscription = async () => {
-        const { error } = await updateSubscription(!isSubscribed);
-        if (!error) {
-            await toggleSubscription(!!isSubscribed, updateSubscription);
-            //alert('구독이 완료되었습니다.');
-        }
+        const { error } = await toggleSubscription()
+        if (error) alert('처리 중 오류가 발생했습니다.')
     }
 
     return (
